@@ -1,1 +1,4 @@
-g++ `pkg-config --cflags --libs libdvdcss libudf libiso9660` 
+g++ -c main.cpp
+g++ -c DVDRipper.cpp `pkg-config --cflags --libs libdvdcss libiso9660`
+g++ *.o `pkg-config --cflags --libs libdvdcss libiso9660` -o ripper 
+
