@@ -1,0 +1,1 @@
+g++ `pkg-config --cflags --libs libdvdcss libudf libiso9660` 
