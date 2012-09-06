@@ -6,7 +6,6 @@
 
 #include <vector>
 #include <map>
-#include <cdio/cdio.h>
 #include <cdio/iso9660.h>
 #include <dvdcss/dvdcss.h>
 

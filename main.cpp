@@ -5,8 +5,7 @@
 #include <fcntl.h>
 #include "DVDRipper.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
    bool test = false;
    int flags = O_RDWR;
    
