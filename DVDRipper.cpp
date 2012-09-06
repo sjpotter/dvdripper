@@ -1,3 +1,5 @@
+/* Copyright (c) 2012 Shaya Potter <spotter@gmail.com */
+
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE64_SOURCE 1
 #define _LARGEFILE_SOURCE 1
@@ -194,6 +196,7 @@ int DVDRipper::rip() {
 	 }
 	 
 	 reseek = false;
+
 	 for(int index = 0; index < len; index++) {
 	    char block[2048];
 	    tmp_buffer = tmp_buffer + DVDCSS_BLOCK_SIZE*index;
@@ -220,7 +223,8 @@ int DVDRipper::rip() {
 		  if (my_write(fd, tmp_buffer, DVDCSS_BLOCK_SIZE) < 0) {
 		     return 1;
 		  }
-		  
+
+		  //as we just seeked fd away fron its position.
 		  reseek = true;
 		  count++;
 	       }

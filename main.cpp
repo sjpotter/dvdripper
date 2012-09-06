@@ -1,10 +1,8 @@
+/* Copyright (c) 2012 Shaya Potter <spotter@gmail.com */
+
 #include <cstdio>
-//#include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
 #include <cstring>
 #include <fcntl.h>
-//#include <cctype>
 #include "DVDRipper.h"
 
 int main(int argc, char *argv[])
