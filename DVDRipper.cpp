@@ -148,9 +148,22 @@ int DVDRipper::rip() {
    unsigned long long count = 0;
    char * buffer;
    
+   /* prep CSS */
+   if (!(input = dvdcss_open(path))) {
+      printf("dvdcss_open failed\n");
+      return 1;
+   }
+   
+   /* if not scrambled skip! */
+   /* this doesn't do anything on iso input */
+   if (! dvdcss_is_scrambled(input)) {
+      printf("dvd isn't scrambled\n");
+      return 1;
+   }
+   
    if (!(buffer = (char *) malloc(MAX*DVDCSS_BLOCK_SIZE))) {
       printf("failed to allocate space for buffer\n");
-      return 0;
+      return 1;
    }
    
    while (! start_blocks.empty()) {
@@ -240,21 +253,6 @@ int DVDRipper::rip() {
 
    printf("descrambled %llu blocks\n", count);
    printf("\n");
-}
 
-int DVDRipper::css_open() {
-   /* prep CSS */
-   if (!(input = dvdcss_open(path))) {
-      printf("dvdcss_open failed\n");
-      return 1;
-   }
-   
-   /* if not scrambled skip! */
-   /* this doesn't do anything on iso input */
-   if (! dvdcss_is_scrambled(input)) {
-      printf("dvd isn't scrambled\n");
-      return 1;
-   }
-   
    return 0;
 }

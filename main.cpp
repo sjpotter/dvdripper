@@ -29,9 +29,5 @@ int main(int argc, char *argv[])
       return 0;
    }
    
-   if (dvdripper->css_open()) {
-     return 0;
-   }
-
    return dvdripper->rip();
 }

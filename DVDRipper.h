@@ -30,7 +30,6 @@ public:
    int open_disc();
    void find_start_blocks();
    void info();
-   int css_open();
    int rip();
 };
 
