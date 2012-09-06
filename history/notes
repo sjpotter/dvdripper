@@ -1,0 +1,15 @@
+	int i_ret, i_index;
+
+	i_ret = dvdcss->pf_read( dvdcss, p_buffer, i_blocks );
+
+        for( i_index = i_ret; i_index; i_index-- )
+        {
+            if( ((uint8_t*)p_buffer)[0x14] & 0x30 )
+            {
+                print_error( dvdcss, "no key but found encrypted block" );
+                /* Only return the initial range of unscrambled blocks? */
+                /* or fail completely? return 0; */
+                break;
+            }
+            p_buffer = (void *) ((uint8_t *)p_buffer + DVDCSS_BLOCK_SIZE);
+        }
