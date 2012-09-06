@@ -74,6 +74,8 @@ int DVDRipper::open_disc() {
       printf("couldn't open %s as UDF\n", path);
       return 1;
    }
+   
+   return 0;
 }
 
 void DVDRipper::find_start_blocks() {
@@ -211,7 +213,7 @@ int DVDRipper::rip() {
 	 reseek = false;
 
 	 for(int index = 0; index < len; index++) {
-	    char block[2048];
+	    //char block[2048];
 	    tmp_buffer = tmp_buffer + DVDCSS_BLOCK_SIZE*index;
 	    
 	    //is this block scrambled?
