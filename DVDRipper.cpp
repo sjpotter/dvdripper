@@ -66,8 +66,6 @@ int DVDRipper::open_disc() {
       return 1;
    }
    
-
-
    total_blocks = disc_len / DVDCSS_BLOCK_SIZE;
    if (disc_len != (long long) total_blocks * DVDCSS_BLOCK_SIZE) {
       printf("partial block?????\n");
@@ -78,7 +76,7 @@ int DVDRipper::open_disc() {
    
    /* find locations where have to rekey CSS */
    if ((p_iso = iso9660_open(path)) == NULL) {
-      printf("couldn't open %s as UDF\n", path);
+      printf("couldn't open %s as ISO\n", path);
       return 1;
    }
    
@@ -127,7 +125,6 @@ void DVDRipper::find_start_blocks() {
 	       
 	       if (blocks) {
 		  if (find(start_blocks.begin(), start_blocks.end(), start) == start_blocks.end()) {
-		     printf("start = %lld\n", start);
 		     start_blocks.push_back(start);
 		  }
 	       }
@@ -158,8 +155,6 @@ int DVDRipper::rip() {
    unsigned long long count = 0;
    char * buffer;
 
-   printf("pos = %lld\n", pos);
-   
    /* prep CSS */
    if (!(input = dvdcss_open(path))) {
       printf("dvdcss_open failed\n");
