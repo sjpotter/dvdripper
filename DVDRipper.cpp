@@ -11,7 +11,7 @@
 #include <cerrno>
 #include "DVDRipper.h"
 
-#define MAX 2000
+#define MAX 1
 #define CEILING(x, y) ((x+(y-1))/y) //ripped from libudf
 
 ssize_t my_write(int fd, const void * buf, size_t count) {
@@ -54,13 +54,20 @@ int DVDRipper::open_disc() {
       printf("failed to open input/output file\n");
       return 1;
    } 
-   
+
    /* figure out how big the ISO image is */
    if ((disc_len = lseek64(fd, 0, SEEK_END)) < 0) {
       perror("lseek64 failed");
       return 1;
    }
+
+   if (lseek64(fd, 0, SEEK_SET) < 0) {
+      perror("lseek64 failed");
+      return 1;
+   }
    
+
+
    total_blocks = disc_len / DVDCSS_BLOCK_SIZE;
    if (disc_len != (long long) total_blocks * DVDCSS_BLOCK_SIZE) {
       printf("partial block?????\n");
@@ -106,7 +113,7 @@ void DVDRipper::find_start_blocks() {
 	       blocks = CEILING(p_statbuf->size, DVDCSS_BLOCK_SIZE);
 	       
 	       start_map[start] = strdup(filename);
-	       
+
 	       if (blocks == 0) {
 		  //file length of 0 would result in a blocks of 0, and don't want
 		  //to subtract one from it.
@@ -120,6 +127,7 @@ void DVDRipper::find_start_blocks() {
 	       
 	       if (blocks) {
 		  if (find(start_blocks.begin(), start_blocks.end(), start) == start_blocks.end()) {
+		     printf("start = %lld\n", start);
 		     start_blocks.push_back(start);
 		  }
 	       }
@@ -149,6 +157,8 @@ int DVDRipper::rip() {
    unsigned long long pos = preamble;
    unsigned long long count = 0;
    char * buffer;
+
+   printf("pos = %lld\n", pos);
    
    /* prep CSS */
    if (!(input = dvdcss_open(path))) {
@@ -178,20 +188,23 @@ int DVDRipper::rip() {
 
       fflush(NULL);
 
-      start_blocks.erase(start_blocks.begin());
-      
+      //Q1. Can it ever fail to get key here?
+      //A1. Probably yes, 
+      //a) since in ISO bruteforced, may not have enough data?
+      //b) perhaps simply a bad location to brute force?
+      //Q2. Will we be able to find the key elsewhere?
+      //A2. Don't know.  Need to learn more
       printf("syncing at position = %llu, next sync point at %llu\n", pos, end);
       if ( dvdcss_seek(input, pos, DVDCSS_SEEK_KEY) < 0) {
-	 //Q. Can it ever fail to get key here, but have the key
-	 //elsewhere?  perhaps have some accounting if this fails,
-	 //know no point in trying to dvdcss_read() till next
-	 //DVDCSS_SEEK_KEY?
 	 printf("failed to seek to %llu: %s\n", pos, dvdcss_error(input));
 	 seek_failed = 1;
       } else {
 	 seek_failed = 0;
       }
-      
+
+
+      start_blocks.erase(start_blocks.begin());
+
       while (pos < end) {
 	 int read_size;
 	 char * tmp_buffer;
@@ -204,16 +217,17 @@ int DVDRipper::rip() {
 	 }
 	 
 	 read_size = len * DVDCSS_BLOCK_SIZE;
-	 
+
 	 if ((blocks_read = read(fd, buffer, read_size)) != read_size) {
-	    printf("short read, not handled yet\n");
+	    printf("short read, not handled yet, block_read = %d\n", blocks_read);
 	    return 1;
 	 }
+
+	 tmp_buffer = buffer;
 	 
 	 reseek = false;
 
 	 for(int index = 0; index < len; index++) {
-	    //char block[2048];
 	    tmp_buffer = tmp_buffer + DVDCSS_BLOCK_SIZE*index;
 	    
 	    //is this block scrambled?
@@ -223,26 +237,24 @@ int DVDRipper::rip() {
 		  continue;
 	       }
 	       
-	       if (! seek_failed) {
-		  if (dvdcss_seek(input, pos+index, DVDCSS_NOFLAGS) < 0) {
-		     printf("failed to seek to %llu (index %d): %s\n", pos+index, index, dvdcss_error(input));
-		     return 1;
-		  }
-		  
-		  if (dvdcss_read(input, tmp_buffer, 1, DVDCSS_READ_DECRYPT) != 1) {
-		     printf("dvdcss_read failed\n");
-		     return 1;
-		  }
-		  
-		  lseek64(fd, (pos+index) * DVDCSS_BLOCK_SIZE, SEEK_SET);
-		  if (my_write(fd, tmp_buffer, DVDCSS_BLOCK_SIZE) < 0) {
-		     return 1;
-		  }
-
-		  //as we just seeked fd away fron its position.
-		  reseek = true;
-		  count++;
+	       if (dvdcss_seek(input, pos+index, DVDCSS_NOFLAGS) < 0) {
+		  printf("failed to seek to %llu (index %d): %s\n", pos+index, index, dvdcss_error(input));
+		  return 1;
 	       }
+	       
+	       if (dvdcss_read(input, tmp_buffer, 1, DVDCSS_READ_DECRYPT) != 1) {
+		  printf("dvdcss_read failed\n");
+		  return 1;
+	       }
+		  
+	       lseek64(fd, (pos+index) * DVDCSS_BLOCK_SIZE, SEEK_SET);
+	       if (my_write(fd, tmp_buffer, DVDCSS_BLOCK_SIZE) < 0) {
+		  return 1;
+	       }
+	       
+	       //as we just seeked fd away fron its position.
+	       reseek = true;
+	       count++;
 	    }
 	 }
 	 
@@ -252,6 +264,8 @@ int DVDRipper::rip() {
 	 }
       }
    }
+
+   fflush(NULL);
 
    printf("descrambled %llu blocks\n", count);
    printf("\n");
