@@ -1,7 +1,7 @@
 OBJS = main.o DVDRipper.o
 CC = g++
-CFLAGS := -Wall $(shell pkg-config --cflags --libs libdvdcss libiso9660) -c
 LFLAGS := -Wall $(shell pkg-config --cflags --libs libdvdcss libiso9660)
+CFLAGS := $(LFLAGS) -c
 OUTPUT = dvdripper
 
 $(OUTPUT): $(OBJS)
