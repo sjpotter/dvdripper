@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Shaya Potter <spotter@gmail.com */
+/* Copyright (c) 2012 Shaya Potter <spotter@gmail.com> */
 
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE64_SOURCE 1

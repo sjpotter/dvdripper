@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Shaya Potter <spotter@gmail.com */
+/* Copyright (c) 2012 Shaya Potter <spotter@gmail.com> */
 
 #pragma once
 #ifndef DVDRIPPER_H
