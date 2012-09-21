@@ -179,7 +179,7 @@ int DVDRipper::rip() {
       
       int cur = pos;
       unsigned long long end = start_blocks[0];
-      int seek_failed = 0;
+      //int seek_failed = 0;
 
       fflush(NULL);
 
@@ -192,11 +192,10 @@ int DVDRipper::rip() {
       printf("syncing at position = %llu, next sync point at %llu\n", pos, end);
       if ( dvdcss_seek(input, pos, DVDCSS_SEEK_KEY) < 0) {
 	 printf("failed to seek to %llu: %s\n", pos, dvdcss_error(input));
-	 seek_failed = 1;
+	 //seek_failed = 1;
       } else {
-	 seek_failed = 0;
+	//seek_failed = 0;
       }
-
 
       start_blocks.erase(start_blocks.begin());
 
