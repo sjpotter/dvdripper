@@ -1,7 +1,7 @@
 dvdripper
 =========
 
-extract CSS from a DVD.
+Remove CSS from a DVD .iso file.
 
 Project motivated by the need to recover scratched DVDs within my
 collection.  Most DVD ripping software doesn't handle scratches well,
@@ -32,3 +32,14 @@ system), this will remove the encryption and enable you to mount the
 image, but you will not be able to simply extract the contents of the
 images (without wasting a lot of space).  Tools that understand the
 IFO structure are neccessary to extract the correct files.
+
+
+Usage
+-----
+1. Use `ddrescue` to get a `.iso` file from your DVD
+2. Use `dvdripper` to remove CSS from the `.iso` file:
+```
+$ dvdripper mydvd.iso
+```
+
+The `.iso` file is directly modified.
