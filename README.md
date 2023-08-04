@@ -43,3 +43,11 @@ $ dvdripper mydvd.iso
 ```
 
 The `.iso` file is directly modified.
+
+
+Dependencies
+------------
+Ubuntu 20.04 package names:
+
+- `libcdio-dev`
+- `libiso9660-dev`
