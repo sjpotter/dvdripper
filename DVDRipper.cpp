@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstring>
 #include <cerrno>
+#include <unistd.h>
 #include "DVDRipper.h"
 
 #define MAX 1
@@ -131,8 +132,8 @@ void DVDRipper::find_start_blocks() {
 	    }
 	 }
       }
-      
-      _cdio_list_free (p_entlist, true);
+
+      _cdio_list_free (p_entlist, true, NULL);
    }
 
    sort(start_blocks.begin(), start_blocks.end());
